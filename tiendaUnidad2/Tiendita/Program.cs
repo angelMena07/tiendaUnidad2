@@ -2,6 +2,7 @@
 using System;
 using System.Data;
 using System.Linq;
+
 using Tiendita.Models;
 
 namespace Tiendita
@@ -144,9 +145,9 @@ namespace Tiendita
                 Console.Write("Usuario: ");
                 usuario.username = Console.ReadLine();
                 Console.Write("Contraseña: ");
-                usuario.password = Console.ReadLine();
+                usuario.password = Console.ReadLine();                 
                 p.con.Open(); //Abrimos la conexion creada.
-                MySqlCommand cmd = new MySqlCommand("SELECT username,tipo_usuario FROM usuarios WHERE username='" + usuario.username + "'AND password='" + usuario.password + "' ", p.con); //Realizamos una selecion de la tabla usuarios.
+                MySqlCommand cmd = new MySqlCommand("SELECT username,tipo_usuario FROM usuarios WHERE username='" + usuario.username + "'AND password='" + Seguridad.Encriptar(usuario.password) + "' ", p.con); //Realizamos una selecion de la tabla usuarios.
                 cmd.Parameters.AddWithValue("username", usuario.username);
                 cmd.Parameters.AddWithValue("password", usuario.password);
                 MySqlDataAdapter sda = new MySqlDataAdapter(cmd);
@@ -187,10 +188,10 @@ namespace Tiendita
             Console.Write("Usuario: ");
             usuario.username = Console.ReadLine();
             Console.Write("Contraseña: ");
-            usuario.password = Console.ReadLine();
+            usuario.password = Seguridad.Encriptar(Console.ReadLine());
             p.con.Open();
             int result = 0;
-            MySqlCommand comando = new MySqlCommand(string.Format("Insert Into usuarios (username,password,tipo_usuario) values('{0}',sha('{1}'),('{2}'))", usuario.username, usuario.password,"admin"), p.con);
+            MySqlCommand comando = new MySqlCommand(string.Format("Insert Into usuarios (username,password,tipo_usuario) values('{0}',('{1}'),('{2}'))", usuario.username, usuario.password,"admin"), p.con);
             result = comando.ExecuteNonQuery();
             p.con.Close();
             return result;
@@ -382,10 +383,30 @@ namespace Tiendita
                 Console.WriteLine("venta eliminada");
             }
         }
+    }
+    public static class Seguridad
+        {
+            /// Encripta una cadena
+            public static string Encriptar(this string _cadenaAencriptar)
+        {
+            string result = string.Empty;
+            byte[] encryted = System.Text.Encoding.Unicode.GetBytes(_cadenaAencriptar);
+            result = Convert.ToBase64String(encryted);
+            return result;
+        }
+
+        /// Esta función desencripta la cadena que le envíamos en el parámentro de entrada.
+        public static string DesEncriptar(this string _cadenaAdesencriptar)
+        {
+            string result = string.Empty;
+            byte[] decryted = Convert.FromBase64String(_cadenaAdesencriptar);
+            //result = System.Text.Encoding.Unicode.GetString(decryted, 0, decryted.ToArray().Length);
+            result = System.Text.Encoding.Unicode.GetString(decryted);
+            return result;
+        }
+
+
 
     }
-
-
-
 }
 
