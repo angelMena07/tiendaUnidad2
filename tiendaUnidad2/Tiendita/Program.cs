@@ -70,6 +70,8 @@ namespace Tiendita
             Console.WriteLine("2) Crear producto");
             Console.WriteLine("3) Actualizar producto");
             Console.WriteLine("4) Eliminar producto");
+            Console.WriteLine("5) CRUD ventas");
+
             Console.WriteLine("0) Salir");
 
             string opcion = Console.ReadLine();
@@ -85,6 +87,42 @@ namespace Tiendita
                     break;
                 case "4":
                     EliminarProducto();
+                    break;
+                case "5":
+                    MenuVenta();
+                    break;
+                default:
+                    Console.WriteLine("Opción invalida");
+                    break;
+
+                case "0": return;
+            }
+            MenuAdmin();
+        }
+
+        public static void MenuVenta()
+        {
+            Console.WriteLine("Menú");
+            Console.WriteLine("1) Buscar venta");
+            Console.WriteLine("2) Crear venta");
+            Console.WriteLine("3) Actualizar venta");
+            Console.WriteLine("4) Eliminar venta");
+            Console.WriteLine("0) Regresar al menu");
+
+            string opcion = Console.ReadLine();
+            switch (opcion)
+            {
+                case "1":
+                    BuscarVenta();
+                    break;
+                case "2":
+                    CrearVenta();
+                    break;
+                case "3":
+                    ActualizarVenta();
+                    break;
+                case "4":
+                    EliminarVenta();
                     break;
                 default:
                     Console.WriteLine("Opción invalida");
@@ -261,7 +299,93 @@ namespace Tiendita
                 Console.WriteLine("Producto eliminado");
             }
         }
+
+        public static void BuscarVenta()
+        {
+            Console.WriteLine("Buscar ventas");
+            Console.WriteLine("Buscar: ");
+            string buscar = Console.ReadLine();
+            using (TienditaContext context = new TienditaContext())
+            {
+
+                IQueryable<Venta> ventas = context.Ventas.Where(p => p.Cliente.Contains(buscar));
+                foreach (Venta venta in ventas)
+                {
+                    Console.WriteLine(venta);
+                }
+            }
+        }
+        public static void CrearVenta()
+    {
+        Console.WriteLine("Crear detalle");
+            Venta venta = new Venta();
+            venta = LlenarVenta (venta);
+
+        using (TienditaContext context = new TienditaContext())
+        {
+            context.Add(venta);
+            context.SaveChanges();
+            Console.WriteLine("venta creado");
+        }
     }
+
+    public static Venta LlenarVenta(Venta venta)
+    {
+        Console.Write("total: ");
+            venta.Total = decimal.Parse(Console.ReadLine());
+
+            DateTime fechaHoy = DateTime.Today;
+            venta.fecha = fechaHoy;
+            Console.Write("fecha: "+fechaHoy);
+            Console.Write("Cliente: ");
+            venta.Cliente = Console.ReadLine();
+
+
+            return venta;
+    }
+        public static Venta SelecionarVenta()
+        {
+            BuscarProductos();
+            Console.Write("Seleciona el código de venta: ");
+            uint id = uint.Parse(Console.ReadLine());
+            using (TienditaContext context = new TienditaContext())
+            {
+                Venta venta = context.Ventas.Find(id);
+                if (venta == null)
+                {
+                    SelecionarVenta();
+                }
+                return venta;
+            }
+        }
+        public static void ActualizarVenta()
+        {
+            Console.WriteLine("Actualizar venta");
+            Venta venta = SelecionarVenta();
+            venta = LlenarVenta(venta);
+            using (TienditaContext context = new TienditaContext())
+            {
+                context.Update(venta);
+                context.SaveChanges();
+                Console.WriteLine("venta actualizada");
+            }
+        }
+
+        public static void EliminarVenta()
+        {
+            Console.WriteLine("Eliminar venta");
+            Venta venta = SelecionarVenta();
+            using (TienditaContext context = new TienditaContext())
+            {
+                context.Remove(venta);
+                context.SaveChanges();
+                Console.WriteLine("venta eliminada");
+            }
+        }
+
+    }
+
+
 
 }
 
