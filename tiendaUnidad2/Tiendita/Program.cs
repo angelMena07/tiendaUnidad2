@@ -67,32 +67,22 @@ namespace Tiendita
         public static void MenuAdmin()
         {
             Console.WriteLine("Menú");
-            Console.WriteLine("1) Buscar producto");
-            Console.WriteLine("2) Crear producto");
-            Console.WriteLine("3) Actualizar producto");
-            Console.WriteLine("4) Eliminar producto");
-            Console.WriteLine("5) CRUD ventas");
-            Console.WriteLine("6) CRUD DETALLES");
+            Console.WriteLine("1) CRUD PRODUCTOS");
+            Console.WriteLine("2) CRUD VENTAS");
+            Console.WriteLine("3) CRUD DETALLES");
             Console.WriteLine("0) Salir");
 
             string opcion = Console.ReadLine();
             switch (opcion)
             {
-                case "1":BuscarProductos();
+
+                case "1":
+                    MenuProductos();
                     break;
                 case "2":
-                    CrearProducto();
-                    break;
-                case "3":
-                    ActualizarProducto();
-                    break;
-                case "4":
-                    EliminarProducto();
-                    break;
-                case "5":
                     MenuVenta();
                     break;
-                case "6":
+                case "3":
                     MenuDetalles();
                     break;
                 default:
@@ -103,7 +93,38 @@ namespace Tiendita
             }
             MenuAdmin();
         }
+        public static void MenuProductos()
+        {
+            Console.WriteLine("Menú");
+            Console.WriteLine("1) Buscar producto");
+            Console.WriteLine("2) Crear producto");
+            Console.WriteLine("3) Actualizar producto");
+            Console.WriteLine("4) Eliminar producto");
+            Console.WriteLine("0) Regresar al menu");
 
+            string opcion = Console.ReadLine();
+            switch (opcion)
+            {
+                case "1":
+                    BuscarProductos();
+                    break;
+                case "2":
+                    CrearProducto();
+                    break;
+                case "3":
+                    ActualizarProducto();
+                    break;
+                case "4":
+                    EliminarProducto();
+                    break;
+                default:
+                    Console.WriteLine("Esa opción no existe, por favor introduce un numero presente en las opciones del menú");
+                    break;
+
+                case "0": return;
+            }
+            MenuAdmin();
+        }
         public static void MenuVenta()
         {
             Console.WriteLine("Menú");
