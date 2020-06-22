@@ -142,7 +142,7 @@ namespace Tiendita
             Console.WriteLine("1) Buscar detalle");
             Console.WriteLine("2) Crear detalle");
             Console.WriteLine("3) Actualizar detalle");
-            Console.WriteLine("4) Eliminar venta");
+            Console.WriteLine("4) Eliminar detalle");
             Console.WriteLine("0) Regresar al menu");
 
             string opcion = Console.ReadLine();
@@ -261,7 +261,7 @@ namespace Tiendita
             {
                 context.Add(detalle);
                 context.SaveChanges();
-                Console.WriteLine("Producto guardado satisfactoriamente");
+                Console.WriteLine("Detalle guardado satisfactoriamente");
             }
         }
 
@@ -445,7 +445,7 @@ namespace Tiendita
         }
         public static void CrearVenta()
     {
-        Console.WriteLine("Crear detalle");
+        Console.WriteLine("Crear venta");
             Venta venta = new Venta();
             venta = LlenarVenta (venta);
 
@@ -453,7 +453,7 @@ namespace Tiendita
         {
             context.Add(venta);
             context.SaveChanges();
-            Console.WriteLine("venta creado");
+            Console.WriteLine("venta creada");
         }
     }
 
