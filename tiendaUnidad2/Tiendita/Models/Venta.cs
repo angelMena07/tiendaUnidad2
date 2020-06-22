@@ -12,5 +12,10 @@ namespace Tiendita.Models
         public decimal Total { get; set; }
         public DateTime fecha { get; set; }
         public string Cliente { get; set; }
+
+        public override string ToString()
+        {
+            return $"{Id}) Total: {Total} Fecha: {fecha} Cliente: {Cliente}";
+        }
     }
 }
