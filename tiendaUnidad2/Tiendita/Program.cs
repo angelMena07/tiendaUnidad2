@@ -1,8 +1,8 @@
-﻿using Gremlin.Net.Process.Traversal;
-using MySql.Data.MySqlClient;
+﻿using MySql.Data.MySqlClient;
 using System;
 using System.Data;
 using System.Linq;
+
 using Tiendita.Models;
 
 namespace Tiendita
@@ -72,7 +72,6 @@ namespace Tiendita
             Console.WriteLine("3) Actualizar producto");
             Console.WriteLine("4) Eliminar producto");
             Console.WriteLine("5) CRUD ventas");
-            Console.WriteLine("6) CRUD Detalles");
 
             Console.WriteLine("0) Salir");
 
@@ -93,9 +92,6 @@ namespace Tiendita
                 case "5":
                     MenuVenta();
                     break;
-                case "6":
-                    MenuDetalles();
-                    break;
                 default:
                     Console.WriteLine("Opción invalida");
                     break;
@@ -104,38 +100,7 @@ namespace Tiendita
             }
             MenuAdmin();
         }
-        public static void MenuDetalles()
-        {
-            Console.WriteLine("Menú");
-            Console.WriteLine("1) Buscar detalle");
-            Console.WriteLine("2) Crear detalle");
-            Console.WriteLine("3) Actualizar detalle");
-            Console.WriteLine("4) Eliminar venta");
-            Console.WriteLine("0) Regresar al menu");
 
-            string opcion = Console.ReadLine();
-            switch (opcion)
-            {
-                case "1":
-                    BuscarDetalle();
-                    break;
-                case "2":
-                    CrearDetalle();
-                    break;
-                case "3":
-                    ActualizarDetalle();
-                    break;
-                case "4":
-                  EliminarDetalle();
-                    break;
-                default:
-                    Console.WriteLine("Opción invalida, no sea wey ahí dicen las opciones");
-                    break;
-
-                case "0": return;
-            }
-            MenuAdmin();
-        }
         public static void MenuVenta()
         {
             Console.WriteLine("Menú");
@@ -180,9 +145,9 @@ namespace Tiendita
                 Console.Write("Usuario: ");
                 usuario.username = Console.ReadLine();
                 Console.Write("Contraseña: ");
-                usuario.password = Console.ReadLine();
+                usuario.password = Console.ReadLine();                 
                 p.con.Open(); //Abrimos la conexion creada.
-                MySqlCommand cmd = new MySqlCommand("SELECT username,tipo_usuario FROM usuarios WHERE username='" + usuario.username + "'AND password='" + usuario.password + "' ", p.con); //Realizamos una selecion de la tabla usuarios.
+                MySqlCommand cmd = new MySqlCommand("SELECT username,tipo_usuario FROM usuarios WHERE username='" + usuario.username + "'AND password='" + Seguridad.Encriptar(usuario.password) + "' ", p.con); //Realizamos una selecion de la tabla usuarios.
                 cmd.Parameters.AddWithValue("username", usuario.username);
                 cmd.Parameters.AddWithValue("password", usuario.password);
                 MySqlDataAdapter sda = new MySqlDataAdapter(cmd);
@@ -223,10 +188,10 @@ namespace Tiendita
             Console.Write("Usuario: ");
             usuario.username = Console.ReadLine();
             Console.Write("Contraseña: ");
-            usuario.password = Console.ReadLine();
+            usuario.password = Seguridad.Encriptar(Console.ReadLine());
             p.con.Open();
             int result = 0;
-            MySqlCommand comando = new MySqlCommand(string.Format("Insert Into usuarios (username,password,tipo_usuario) values('{0}',sha('{1}'),('{2}'))", usuario.username, usuario.password,"admin"), p.con);
+            MySqlCommand comando = new MySqlCommand(string.Format("Insert Into usuarios (username,password,tipo_usuario) values('{0}',('{1}'),('{2}'))", usuario.username, usuario.password,"admin"), p.con);
             result = comando.ExecuteNonQuery();
             p.con.Close();
             return result;
@@ -418,100 +383,30 @@ namespace Tiendita
                 Console.WriteLine("venta eliminada");
             }
         }
-
-        public static void BuscarDetalle()
+    }
+    public static class Seguridad
         {
-            Console.WriteLine("Buscar Detalles");
-            Console.Write("Buscar: ");
-            string buscar = Console.ReadLine();
-            uint busc = Convert.ToUInt32(buscar);
-            using(TienditaContext context = new TienditaContext())
-            {
-                IQueryable<Detalle> detalles = context.Detalles.Where(p => p.Id.Equals(busc));
-                foreach(Detalle detalle in detalles)
-                {
-                    Console.WriteLine(detalle);
-                }
-                
-            }
+            /// Encripta una cadena
+            public static string Encriptar(this string _cadenaAencriptar)
+        {
+            string result = string.Empty;
+            byte[] encryted = System.Text.Encoding.Unicode.GetBytes(_cadenaAencriptar);
+            result = Convert.ToBase64String(encryted);
+            return result;
         }
 
-        public static void CrearDetalle()
+        /// Esta función desencripta la cadena que le envíamos en el parámentro de entrada.
+        public static string DesEncriptar(this string _cadenaAdesencriptar)
         {
-            Console.WriteLine("Crear Detalle");
-            Detalle detalle = new Detalle();
-            detalle = LlenarDetalle(detalle);
-            
-            using (TienditaContext context = new TienditaContext())
-            {
-                context.Add(detalle);
-                context.SaveChanges();
-                Console.WriteLine("Producto guardado satisfactoriamente");
-            }
+            string result = string.Empty;
+            byte[] decryted = Convert.FromBase64String(_cadenaAdesencriptar);
+            //result = System.Text.Encoding.Unicode.GetString(decryted, 0, decryted.ToArray().Length);
+            result = System.Text.Encoding.Unicode.GetString(decryted);
+            return result;
         }
 
-        public static Detalle LlenarDetalle(Detalle detalle) 
-        {
-            Console.WriteLine("ID de producto: ");
-            detalle.ProductoId = Convert.ToUInt32(Console.ReadLine());
-            Console.WriteLine("ID de la venta: ");
-            detalle.VentaId = Convert.ToUInt32(Console.ReadLine());
-            Console.WriteLine("Subtotal: ");
-            detalle.Subtotal = decimal.Parse(Console.ReadLine());
-
-
-            return detalle;
-            
-        
-        }
-
-        public static Detalle SeleccionarDetalle()
-        {
-            BuscarDetalle();
-            Console.WriteLine("Seleccionar el código del Detalle");
-            uint id = uint.Parse(Console.ReadLine());
-            using (TienditaContext context = new TienditaContext())
-            {
-                Detalle detalle = context.Detalles.Find(id);
-                if (detalle == null)
-                {
-                    SeleccionarDetalle();
-                }
-                return detalle;
-            }
-        }
-
-        public static void ActualizarDetalle()
-        {
-            Console.WriteLine("Actualizar detalle");
-            Detalle detalle = SeleccionarDetalle();
-            detalle = LlenarDetalle(detalle);
-
-            using (TienditaContext context = new TienditaContext())
-            {
-                context.Update(detalle);
-                context.SaveChanges();
-                Console.WriteLine("Registro Actualizado satisfactoriamente");
-            }
-        }
-
-        public static void EliminarDetalle()
-        {
-            Console.WriteLine("Eliminar detalle");
-            Detalle detalle = SeleccionarDetalle();
-            using (TienditaContext context = new TienditaContext())
-            {
-                context.Remove(detalle);
-                context.SaveChanges();
-                Console.WriteLine("Registro Eliminado satisfactoriamente");
-            }
-        }
-        
 
 
     }
-
-
-
 }
 
