@@ -20,8 +20,8 @@ namespace Tiendita
 
         public static void MenuInicio()
         {
-            Console.WriteLine("Bienvenido a la tiendita uwu: ");
-            Console.WriteLine("¿Que quieres hacer?");
+            Console.WriteLine("Bienvenido a la tiendita :) ");
+            Console.WriteLine("Por favor introduce un número del menú conforme a lo que quieras hacer:");
             Console.WriteLine("1) Iniciar sesión");
             Console.WriteLine("2) Registrarte");
             Console.WriteLine("0) Salir");
@@ -35,7 +35,7 @@ namespace Tiendita
                     Register();
                     break;
                 default:
-                    Console.WriteLine("Opción invalida");
+                    Console.WriteLine("Esa opción no existe, por favor introduce un numero presente en las opciones del menú");
                     break;
                 case "0": return;
             }
@@ -44,7 +44,7 @@ namespace Tiendita
         }
         public static void MenuUsuario()
         {
-            Console.WriteLine("Bienvenido a la tiendita uwu ");
+            Console.WriteLine("Bienvenido a la tiendita");
             Console.WriteLine("Teclea 1 para buscar productos");
             Console.WriteLine("Teclea 0 para salir");
             
@@ -55,7 +55,7 @@ namespace Tiendita
                 case "1":BuscarProductos();
                     break;
                 default:
-                    Console.WriteLine("Opción invalida");
+                    Console.WriteLine("Esa opción no existe, por favor introduce un numero presente en las opciones del menú");
                     break;
                 case "0": return;
               
@@ -93,7 +93,7 @@ namespace Tiendita
                     MenuVenta();
                     break;
                 default:
-                    Console.WriteLine("Opción invalida");
+                    Console.WriteLine("Esa opción no existe, por favor introduce un numero presente en las opciones del menú");
                     break;
 
                 case "0": return;
@@ -126,7 +126,7 @@ namespace Tiendita
                     EliminarVenta();
                     break;
                 default:
-                    Console.WriteLine("Opción invalida");
+                    Console.WriteLine("Esa opción no existe, por favor introduce un numero presente en las opciones del menú");
                     break;
 
                 case "0": return;
@@ -142,7 +142,7 @@ namespace Tiendita
             try
             {
                 Console.WriteLine("Ingresa tus datos");
-                Console.Write("Usuario: ");
+                Console.Write("Nombre de Usuario: ");
                 usuario.username = Console.ReadLine();
                 Console.Write("Contraseña: ");
                 usuario.password = Console.ReadLine();                 
@@ -157,10 +157,10 @@ namespace Tiendita
                 {
                     if (dt.Rows[0][1].ToString()=="admin")
                     {
-                        Console.WriteLine("Hola vato");
+                        Console.WriteLine("Bienvenido");
                         MenuAdmin();
                     }
-                    else if(dt.Rows[0][1].ToString()!="admin")
+                    else if(dt.Rows[0][1].ToString()!="user")
                     {
                         Console.WriteLine("Hola usuario");
                         MenuUsuario();
@@ -191,7 +191,7 @@ namespace Tiendita
             usuario.password = Seguridad.Encriptar(Console.ReadLine());
             p.con.Open();
             int result = 0;
-            MySqlCommand comando = new MySqlCommand(string.Format("Insert Into usuarios (username,password,tipo_usuario) values('{0}',('{1}'),('{2}'))", usuario.username, usuario.password,"admin"), p.con);
+            MySqlCommand comando = new MySqlCommand(string.Format("Insert Into usuarios (username,password,tipo_usuario) values('{0}',('{1}'),('{2}'))", usuario.username, usuario.password,"user"), p.con);
             result = comando.ExecuteNonQuery();
             p.con.Close();
             return result;
