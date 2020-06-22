@@ -192,18 +192,19 @@ namespace Tiendita
                 {
                     if (dt.Rows[0][1].ToString()=="admin")
                     {
-                        Console.WriteLine("Bienvenido");
+                        Console.WriteLine("Bienvenido administrador");
                         MenuAdmin();
                     }
-                    else if(dt.Rows[0][1].ToString()!="user")
+                    else if(dt.Rows[0][1].ToString()!="admin")
                     {
-                        Console.WriteLine("Hola usuario");
+                        Console.WriteLine("Hola usuario"); 
                         MenuUsuario();
                     }
                 }
                 else
                 {
                     Console.WriteLine("Usuario  y/o contraseña incorrecta");
+                    Console.WriteLine(dt.Rows[0][1].ToString());
                 }
 
             }catch(Exception e)
@@ -220,7 +221,7 @@ namespace Tiendita
             Program p = new Program();
             Console.WriteLine("Ingresa tus datos");
             Usuario usuario = new Usuario();
-            Console.Write("Usuario: ");
+            Console.Write("Nombre de usuario: ");
             usuario.username = Console.ReadLine();
             Console.Write("Contraseña: ");
             usuario.password = Seguridad.Encriptar(Console.ReadLine());
@@ -229,6 +230,7 @@ namespace Tiendita
             MySqlCommand comando = new MySqlCommand(string.Format("Insert Into usuarios (username,password,tipo_usuario) values('{0}',('{1}'),('{2}'))", usuario.username, usuario.password,"user"), p.con);
             result = comando.ExecuteNonQuery();
             p.con.Close();
+            Console.Write("Usuario Registrado. ");
             return result;
                 }
 
