@@ -13,5 +13,10 @@ namespace Tiendita.Models
         public Venta Venta { get; set; }
         public decimal Subtotal { get; set; }
         public virtual ICollection<Detalle> Detalles {get; set;}
+
+        public override string ToString()
+        {
+            return $"{Id}) Producto: {ProductoId} Venta: {VentaId} Subtotal: {Subtotal}MXN" ;
+        }
     }
 }
